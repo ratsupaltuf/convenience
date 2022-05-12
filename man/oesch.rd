@@ -29,25 +29,30 @@ Simon Bienstman
 }
 \note{
 
-# prep status indicator variables
-# for function input like occupar, we need to properly code NA in n.employees before calling function
-# Those who are working for family business are coded as self-employed without employees in Oesch schema
-# -> need to fix that as well before function call
-# those working for family business have no empl. anyways -> ess[emplrel==3, table(emplno)]
+
+
+For function input, we need to properly code NA in n.employees before calling function
+Those who are working for family business are coded as self-employed without employees in Oesch schema
+-> need to fix that as well before function call
+those working for family business have no empl. anyways -> ess[emplrel==3, table(emplno)]
 
 freq(ess$emplrel)
+
 ess[, self.employed:=0]
+
+
 ess[emplrel==2 | emplrel==3, self.employed:=1]
+
 tail(freq(ess$emplno))
+
 ess[, n.employees:=ifelse(is.na(emplno) | emplno>66665,0, emplno)]
 
 freq(ess$self.employed)
+
 summary(ess$n.employees)
 
-# Function depends on package "sjlabelled"
-# Function based on isco08. If isco88, convert to isco08 using occupar::isco88to08()
-# For input variables, see above.
-# possible classes: 16,8,5
+Function based on isco08. If necessary, convert to isco88 to isco08 using occupar::isco88to08()
+For input variables, see above.
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
