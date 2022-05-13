@@ -4,11 +4,14 @@
 \title{Oesch class schema}
 \description{This function codes the Oesch class schema based on respondent's occupation, employment status, and number of employees}
 \usage{
-oesch(isco08=data$isco08, self.employed=data$selfem, n.employees=data$n_employees, n.classes=5)
+oesch(isco08=x, self.employed=NULL, n.employees=NULL, n.classes=16)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{x}{
+\item{isco08}{The four digit ISCO 08 code}
+\item{self.employed}{Numeric vector with 0=not self-employed and 1=self-employed}
+\item{n.employees}{Numeric vector with the number of employees. Will be recoded to 0/<=10/>10}
+\item{n.classes}{Numeric value indicating desired degree of differentiation of class schema}
 %%     ~~Describe \code{x} here~~
 }
 }
@@ -16,13 +19,15 @@ oesch(isco08=data$isco08, self.employed=data$selfem, n.employees=data$n_employee
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-\item{isco08}{The four digit ISCO 08 code}
-\item{self.employed}{Numeric vector with 0=not self-employed and 1=self-employed}
-\item{n.employees}{Numeric vector with the number of employees. Will be recoded to 0/<=10/>10}
-\item{n.classes}{Numeric value indicating desired degree of differentiation of class schema}
+Returns a vector of oesch class codes.
 }
 \references{
-https://people.unil.ch/danieloesch/scripts/
+https://github.com/DiogoFerrari/occupar -> The function is largely adapted from Ferrari's code.
+
+
+https://people.unil.ch/danieloesch/scripts/ -> The body of the function (the class coding) is from Oesch's code.
+
+Oesch, D. (2006). Coming to grips with a changing class structure: An analysis of employment stratification in Britain, Germany, Sweden and Switzerland. International Sociology, 21(2), 263–288. https://doi.org/10.1177/0268580906061379
 }
 \author{
 Simon Bienstman
