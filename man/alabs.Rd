@@ -19,4 +19,5 @@ Value and labels of \code{x}
 }
 \examples{
 alabs(x, kable=F)
+
 }

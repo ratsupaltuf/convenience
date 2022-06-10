@@ -8,9 +8,12 @@
 #' @return Frequency table as produced by sjlabelled::freq of \code{x}, but with labels
 #' @examples
 #' freql(x, y="Some title")
-
+#' @importFrom summarytools freq
+#' @importFrom knitr kable
+#' @importFrom sjlabelled get_label
+#' @export
 
 freql <- function(x, y="") {
-  freq(as_label(x)) %>%
-    kable(caption=paste(y, "-", get_label(x), sep=" "), digits=2)
+  summarytools::freq(as_label(x)) %>%
+    knitr::kable(caption=paste(y, "-", sjlabelled::get_label(x), sep=" "), digits=2)
 }

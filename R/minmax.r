@@ -7,7 +7,7 @@
 #' @return \code{x} ranging from 0 to 1
 #' @examples
 #' minmax(x)
-
+#' @export
 
 minmax<-function(x) {xnorm=(x-min(x, na.rm=T))/(max(x, na.rm = T)-min(x, na.rm = T))}
 

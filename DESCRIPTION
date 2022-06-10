@@ -9,7 +9,5 @@ Description: The package contains functions I regularly use for recoding.
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Imports: 
-  sjlabelled
-  knitr
+Imports: sjlabelled, knitr, summarytools, dplyr
 RoxygenNote: 7.1.2

@@ -7,11 +7,15 @@
 #' @return Value and labels of \code{x}
 #' @examples
 #' alabs(x, kable=F)
+#'
+#' @importFrom dplyr tibble
+#' @importFrom knitr kable
+#' @export
 
 alabs<- function(x, kable=TRUE){
   tb<- tibble(labels=names(attributes(x)$labels), values=attributes(x)$labels)
   if(kable==T) {
-  knitr::kable(tb)
+  kable(tb)
   }  else {
     tb
   }
