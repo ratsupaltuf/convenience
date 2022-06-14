@@ -1,6 +1,7 @@
 #' Show values and labels of a labelled vector in table format
 #'
 #' @description
+#' This is a helper function for the times you want to see values and labels of a labelled vector.
 #'
 #' @param x A labelled vector
 #' @param kable Optional=should the output be processed by knitr::kable?

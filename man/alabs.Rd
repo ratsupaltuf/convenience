@@ -15,7 +15,7 @@ alabs(x, kable = TRUE)
 Value and labels of \code{x}
 }
 \description{
-
+This is a helper function for the times you want to see values and labels of a labelled vector.
 }
 \examples{
 alabs(x, kable=F)
