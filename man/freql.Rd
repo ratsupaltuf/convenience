@@ -4,14 +4,17 @@
 \alias{freql}
 \title{Frequency table with value labels}
 \usage{
-freql(x, y = "")
+freql(x, cap = sjlabelled::get_label(x), kable = T, d = 3, ...)
 }
 \arguments{
 \item{x}{A labelled vector}
 
-\item{y}{A title for the frequency table}
+\item{cap}{A character specifying the title for the frequency table.
+Defaul is the variable label}
 
 \item{kable}{Optional=should the output be processed by knitr::kable?}
+
+\item{d}{number of digits to be displayed}
 }
 \value{
 Frequency table as produced by sjlabelled::freq of \code{x}, but with labels
