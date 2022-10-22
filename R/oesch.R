@@ -2,7 +2,7 @@
 #'
 #'
 #'
-#' @param isco08 ISCO-08 codes (preferably 4-digits)
+#' @param isco ISCO-08 or ISCO-88 codes (preferably 4-digits)
 #' @param self.employed Numeric vector with 0=not self-employed and 1=self-employed
 #' @param n.employees Numeric vector with the number of employees. Will be recoded to 0/<=10/>10
 #' @param n.classes Numeric value indicating desired degree of differentiation of class schema
@@ -19,7 +19,7 @@
 #' @return The Oesch class position
 #' @author Simon Bienstman
 #'
-#' @examples oesch(isco08=data$isco08, self.employed=data$selfem, n.employees=data$n_employees, n.classes=5)
+#' @examples oesch(isco=data$isco, self.employed=data$selfem, n.employees=data$n_employees, n.classes=5)
 #' @note
 #'
 #' For function input, we need to properly code NA in n.employees before calling function
@@ -42,13 +42,12 @@
 #'
 #' summary(ess$n.employees)
 #'
-#' Function based on isco08. If necessary, convert to isco88 to isco08 using occupar::isco88to08()
 #' For input variables, see above.
 #'
 #' @importFrom sjlabelled set_label set_labels
 #' @export
 
-oesch08 <- function(isco08, self.employed=NULL, n.employees=NULL, n.classes=16){
+oesch <- function(isco, isco08=TRUE, self.employed=NULL, n.employees=NULL, n.classes=16){
   ## check number of categories allowed
   ## ----------------------------------
   if (!(n.classes %in% c(16,8,5))) {
@@ -62,7 +61,7 @@ oesch08 <- function(isco08, self.employed=NULL, n.employees=NULL, n.classes=16){
   if (is.null(n.employees)) {
     # Following Oesch for Partner's class ESS 6-9
     message("\n\nIf n.employees is NULL, we pragmatically assign '0' and produce a reduced class schema.\n\n")
-    n.employees <- rep(0, length(isco08))
+    n.employees <- rep(0, length(isco))
   }
 
     ###########################################
@@ -73,7 +72,7 @@ oesch08 <- function(isco08, self.employed=NULL, n.employees=NULL, n.classes=16){
   n.employees[is.na(n.employees)] <- 0
 
 
-  selfem_mainjob <- rep(NA, length(isco08))
+  selfem_mainjob <- rep(NA, length(isco))
   selfem_mainjob[self.employed == 1 & n.employees > 9]        <- 4  ####  self-employed 10+ employees
   selfem_mainjob[self.employed == 1 & n.employees %in% 1:9]   <- 3  ####  small employers <10
   selfem_mainjob[self.employed == 1 & n.employees == 0]       <- 2  ####  self-employed, no employees
@@ -83,11 +82,15 @@ oesch08 <- function(isco08, self.employed=NULL, n.employees=NULL, n.classes=16){
 
 
 
-  d<- data.frame(isco_mainjob=isco08, selfem_mainjob)
+  d<- data.frame(isco_mainjob=isco, selfem_mainjob)
   d$isco_mainjob[is.na(d$isco_mainjob)] <- -9
 
 
-  if (any(isco08[(!is.na(isco08)) & isco08 != 10] %>% nchar == 4)) {
+  if (isco08==F) {
+
+
+
+  if (any(isco[(!is.na(isco)) & isco != 10] %>% nchar == 4)) {
 
     #################################################
     # Create Oesch class schema for respondents ISCO 4-digit
@@ -214,11 +217,11 @@ oesch08 <- function(isco08, self.employed=NULL, n.employees=NULL, n.classes=16){
     d$class16[d$selfem_mainjob == 1 & d$isco_mainjob == 8322] <- 16
     d$class16[d$selfem_mainjob == 1 & d$isco_mainjob >= 9100 &  d$isco_mainjob <= 9152] <- 16
 
-  } else if (any(isco08[(!is.na(isco08)) & isco08 != 10] %>% nchar %in% c(2,3))) {
+  } else if (any(isco[(!is.na(isco)) & isco != 10] %>% nchar %in% c(2,3))) {
 
 
-    if (any(isco08[(!is.na(isco08)) & isco08 != 10] %>% nchar ==3)) {
-      isco08 = isco08 %>% stringr::str_replace(string=., pattern=".$", replacement="")
+    if (any(isco[(!is.na(isco)) & isco != 10] %>% nchar ==3)) {
+      isco = isco %>% stringr::str_replace(string=., pattern=".$", replacement="")
     }
 
     #################################################
@@ -353,6 +356,230 @@ oesch08 <- function(isco08, self.employed=NULL, n.employees=NULL, n.classes=16){
     d$class16[d$selfem_mainjob == 1 & d$isco_mainjob >= 90 & d$isco_mainjob <= 91] <- 16
 
   }
+
+  }
+
+
+  if (isco08==T) {
+
+
+    if (any(isco[(!is.na(isco)) & isco != 10] %>% nchar == 4)) {
+
+      #################################################
+      # Create Oesch class schema for respondents
+      #################################################
+
+      d$class16_r <- -9
+
+      # Large employers (1)
+
+      d$class16_r[d$selfem_mainjob == 4] <- 1
+
+      # Self-employed professionals (2)
+
+      d$class16_r[(d$selfem_mainjob == 2 | d$selfem_mainjob == 3) & d$isco_mainjob >= 2000 & d$isco_mainjob <= 2162] <- 2
+      d$class16_r[(d$selfem_mainjob == 2 | d$selfem_mainjob == 3) & d$isco_mainjob >= 2164 & d$isco_mainjob <= 2165] <- 2
+      d$class16_r[(d$selfem_mainjob == 2 | d$selfem_mainjob == 3) & d$isco_mainjob >= 2200 & d$isco_mainjob <= 2212] <- 2
+      d$class16_r[(d$selfem_mainjob == 2 | d$selfem_mainjob == 3) & d$isco_mainjob == 2250] <- 2
+      d$class16_r[(d$selfem_mainjob == 2 | d$selfem_mainjob == 3) & d$isco_mainjob >= 2261 & d$isco_mainjob <= 2262] <- 2
+      d$class16_r[(d$selfem_mainjob == 2 | d$selfem_mainjob == 3) & d$isco_mainjob >= 2300 & d$isco_mainjob <= 2330] <- 2
+      d$class16_r[(d$selfem_mainjob == 2 | d$selfem_mainjob == 3) & d$isco_mainjob >= 2350 & d$isco_mainjob <= 2352] <- 2
+      d$class16_r[(d$selfem_mainjob == 2 | d$selfem_mainjob == 3) & d$isco_mainjob >= 2359 & d$isco_mainjob <= 2432] <- 2
+      d$class16_r[(d$selfem_mainjob == 2 | d$selfem_mainjob == 3) & d$isco_mainjob >= 2500 & d$isco_mainjob <= 2619] <- 2
+      d$class16_r[(d$selfem_mainjob == 2 | d$selfem_mainjob == 3) & d$isco_mainjob == 2621] <- 2
+      d$class16_r[(d$selfem_mainjob == 2 | d$selfem_mainjob == 3) & d$isco_mainjob >= 2630 & d$isco_mainjob <= 2634] <- 2
+      d$class16_r[(d$selfem_mainjob == 2 | d$selfem_mainjob == 3) & d$isco_mainjob >= 2636 & d$isco_mainjob <= 2640] <- 2
+      d$class16_r[(d$selfem_mainjob == 2 | d$selfem_mainjob == 3) & d$isco_mainjob >= 2642 & d$isco_mainjob <= 2643] <- 2
+
+      # Small business owners with employees (3)
+
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob >= 1000 & d$isco_mainjob <= 1439] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob == 2163] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob == 2166] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob >= 2220 & d$isco_mainjob <= 2240] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob == 2260] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob >= 2263 & d$isco_mainjob <= 2269] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob >= 2340 & d$isco_mainjob <= 2342] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob >= 2353 & d$isco_mainjob <= 2356] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob >= 2433 & d$isco_mainjob <= 2434] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob == 2620] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob == 2622] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob == 2635] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob == 2641] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob >= 2650 & d$isco_mainjob <= 2659] <- 3
+      d$class16_r[d$selfem_mainjob == 3 & d$isco_mainjob >= 3000 & d$isco_mainjob <= 9629] <- 3
+
+      # Small business owners without employees (4)
+
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob >= 1000 & d$isco_mainjob <= 1439] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob == 2163] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob == 2166] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob >= 2220 & d$isco_mainjob <= 2240] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob == 2260] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob >= 2263 & d$isco_mainjob <= 2269] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob >= 2340 & d$isco_mainjob <= 2342] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob >= 2353 & d$isco_mainjob <= 2356] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob >= 2433 & d$isco_mainjob <= 2434] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob == 2620] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob == 2622] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob == 2635] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob == 2641] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob >= 2650 & d$isco_mainjob <= 2659] <- 4
+      d$class16_r[d$selfem_mainjob == 2 & d$isco_mainjob >= 3000 & d$isco_mainjob <= 9629] <- 4
+
+      # Technical experts (5)
+
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2100 &  d$isco_mainjob <= 2162] <- 5
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2164 &  d$isco_mainjob <= 2165] <- 5
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2500 &  d$isco_mainjob <= 2529] <- 5
+
+      # Technicians (6)
+
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 3100 &  d$isco_mainjob <= 3155] <- 6
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 3210 &  d$isco_mainjob <= 3214] <- 6
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 3252] <- 6
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 3500 &  d$isco_mainjob <= 3522] <- 6
+
+      # Skilled manual (7)
+
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 6000 &  d$isco_mainjob <= 7549] <- 7
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 8310 &  d$isco_mainjob <= 8312] <- 7
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 8330] <- 7
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 8332 &  d$isco_mainjob <= 8340] <- 7
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 8342 &  d$isco_mainjob <= 8344] <- 7
+
+      # Low-skilled manual (8)
+
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 8000 &  d$isco_mainjob <= 8300] <- 8
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 8320 &  d$isco_mainjob <= 8321] <- 8
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 8341] <- 8
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 8350] <- 8
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 9200 &  d$isco_mainjob <= 9334] <- 8
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 9600 &  d$isco_mainjob <= 9620] <- 8
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 9622 &  d$isco_mainjob <= 9629] <- 8
+
+      # Higher-grade managers and administrators (9)
+
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 1000 &  d$isco_mainjob <= 1300] <- 9
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 1320 &  d$isco_mainjob <= 1349] <- 9
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2400 &  d$isco_mainjob <= 2432] <- 9
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2610 &  d$isco_mainjob <= 2619] <- 9
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 2631] <- 9
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 100 &  d$isco_mainjob <= 110] <- 9
+
+      # Lower-grade managers and administrators (10)
+
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 1310 &  d$isco_mainjob <= 1312] <- 10
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 1400 &  d$isco_mainjob <= 1439] <- 10
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2433 &  d$isco_mainjob <= 2434] <- 10
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 3300 &  d$isco_mainjob <= 3339] <- 10
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 3343] <- 10
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 3350 &  d$isco_mainjob <= 3359] <- 10
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 3411] <- 10
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 5221] <- 10
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 200 &  d$isco_mainjob <= 210] <- 10
+
+      # Skilled clerks (11)
+
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 3340 &  d$isco_mainjob <= 3342] <- 11
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 3344] <- 11
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 4000 &  d$isco_mainjob <= 4131] <- 11
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 4200 &  d$isco_mainjob <= 4221] <- 11
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 4224 &  d$isco_mainjob <= 4413] <- 11
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 4415 &  d$isco_mainjob <= 4419] <- 11
+
+      # Unskilled clerks (12)
+
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 4132] <- 12
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 4222] <- 12
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 4223] <- 12
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 5230] <- 12
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 9621] <- 12
+
+      # Socio-cultural professionals (13)
+
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2200 &  d$isco_mainjob <= 2212] <- 13
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 2250] <- 13
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2261 &  d$isco_mainjob <= 2262] <- 13
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2300 &  d$isco_mainjob <= 2330] <- 13
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2350 &  d$isco_mainjob <= 2352] <- 13
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 2359] <- 13
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 2600] <- 13
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 2621] <- 13
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 2630] <- 13
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2632 &  d$isco_mainjob <= 2634] <- 13
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2636 &  d$isco_mainjob <= 2640] <- 13
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2642 &  d$isco_mainjob <= 2643] <- 13
+
+      # Socio-cultural semi-professionals (14)
+
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 2163] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 2166] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2220 &  d$isco_mainjob <= 2240] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 2260] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2263 &  d$isco_mainjob <= 2269] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2340 &  d$isco_mainjob <= 2342] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2353 &  d$isco_mainjob <= 2356] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 2620] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 2622] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 2635] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 2641] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 2650 &  d$isco_mainjob <= 2659] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 3200] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 3220 &  d$isco_mainjob <= 3230] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 3250] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 3253 &  d$isco_mainjob <= 3257] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 3259] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 3400 &  d$isco_mainjob <= 3410] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 3412 &  d$isco_mainjob <= 3413] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 3430 &  d$isco_mainjob <= 3433] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 3435] <- 14
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 4414] <- 14
+
+      # Skilled service (15)
+
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 3240] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 3251] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 3258] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 3420 &  d$isco_mainjob <= 3423] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 3434] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 5000 &  d$isco_mainjob <= 5120] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 5140 &  d$isco_mainjob <= 5142] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 5163] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 5165] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 5200] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 5220] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 5222 &  d$isco_mainjob <= 5223] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 5241 &  d$isco_mainjob <= 5242] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 5300 &  d$isco_mainjob <= 5321] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 5400 &  d$isco_mainjob <= 5413] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 5419] <- 15
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 8331] <- 15
+
+      # Low-skilled service (16)
+
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 5130 &  d$isco_mainjob <= 5132] <- 16
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 5150 &  d$isco_mainjob <= 5162] <- 16
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 5164] <- 16
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 5169] <- 16
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 5210 &  d$isco_mainjob <= 5212] <- 16
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 5240] <- 16
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 5243 &  d$isco_mainjob <= 5249] <- 16
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 5322 &  d$isco_mainjob <= 5329] <- 16
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 5414] <- 16
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob == 8322] <- 16
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 9100 &  d$isco_mainjob <= 9129] <- 16
+      d$class16_r[d$selfem_mainjob == 1 & d$isco_mainjob >= 9400 &  d$isco_mainjob <= 9520] <- 16
+
+
+    } else {
+      stop("\n\n Oesch currently available only for 4-digit ISCO 08.\n\n Try converding to ISCO88 using occupar::isco08to88()")
+    }
+  }
+
+
+
+
 
   ###################################
   # Construct classes and assign class labels
