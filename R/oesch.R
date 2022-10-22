@@ -55,22 +55,33 @@ oesch08 <- function(isco08, self.employed=NULL, n.employees=NULL, n.classes=16){
     stop("\n\nNumber of classes allowed to compute Oesch class scheme are 16, 8, or 5.\n\n")
   }
 
-  if (is.null(self.employed) | is.null(n.employees)) {
-    stop("\n\nThe parameters emplrel and emplno must be non-NULL to compute Oesch.\n\n")
+  if (is.null(self.employed)) {
+    stop("\n\nThe parameters emplrel must be non-NULL to compute Oesch.\n\n")
   }
+
+  if (is.null(n.employees)) {
+    # Following Oesch for Partner's class ESS 6-9
+    message("\n\nIf n.employees is NULL, we pragmatically assign '0' and produce a reduced class schema.\n\n")
+    n.employees <- rep(0, length(isco08))
+  }
+
+    ###########################################
+  # Compute employment status categories
+  ###########################################
 
   self.employed[self.employed != 1 | is.na(self.employed)] <- 0
   n.employees[is.na(n.employees)] <- 0
 
-  ###########################################
-  # Compute employment status categories
-  ###########################################
 
   selfem_mainjob <- rep(NA, length(isco08))
   selfem_mainjob[self.employed == 1 & n.employees > 9]        <- 4  ####  self-employed 10+ employees
   selfem_mainjob[self.employed == 1 & n.employees %in% 1:9]   <- 3  ####  small employers <10
   selfem_mainjob[self.employed == 1 & n.employees == 0]       <- 2  ####  self-employed, no employees
   selfem_mainjob[self.employed != 1]                          <- 1  ####  employee
+
+
+
+
 
   d<- data.frame(isco_mainjob=isco08, selfem_mainjob)
   d$isco_mainjob[is.na(d$isco_mainjob)] <- -9
@@ -418,5 +429,6 @@ oesch08 <- function(isco08, self.employed=NULL, n.employees=NULL, n.classes=16){
 
     return(d$class5)
   }
+
 
 }
