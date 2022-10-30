@@ -17,7 +17,7 @@
 #'
 #' Oesch, D. (2006). Coming to grips with a changing class structure: An analysis of employment stratification in Britain, Germany, Sweden and Switzerland. International Sociology, 21(2), 263–288. https://doi.org/10.1177/0268580906061379
 #'
-#' @return The Oesch class position
+#' @return The Oesch class code
 #' @author Simon Bienstman
 #'
 #' @examples oesch(isco=data$isco, isco08=TRUE, self.employed=data$selfem, n.employees=data$n_employees, n.classes=5)
