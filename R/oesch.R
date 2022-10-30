@@ -2,7 +2,8 @@
 #'
 #'
 #'
-#' @param isco ISCO-08 or ISCO-88 codes (preferably 4-digits)
+#' @param isco ISCO codes (preferably 4-digits)
+#' @param isco08 ISCO 08 or 88 codes?
 #' @param self.employed Numeric vector with 0=not self-employed and 1=self-employed
 #' @param n.employees Numeric vector with the number of employees. Will be recoded to 0/<=10/>10
 #' @param n.classes Numeric value indicating desired degree of differentiation of class schema
@@ -19,7 +20,7 @@
 #' @return The Oesch class position
 #' @author Simon Bienstman
 #'
-#' @examples oesch(isco=data$isco, self.employed=data$selfem, n.employees=data$n_employees, n.classes=5)
+#' @examples oesch(isco=data$isco, isco08=TRUE, self.employed=data$selfem, n.employees=data$n_employees, n.classes=5)
 #' @note
 #'
 #' For function input, we need to properly code NA in n.employees before calling function
@@ -60,7 +61,7 @@ oesch <- function(isco, isco08=TRUE, self.employed=NULL, n.employees=NULL, n.cla
 
   if (is.null(n.employees)) {
     # Following Oesch for Partner's class ESS 6-9
-    message("\n\nIf n.employees is NULL, we pragmatically assign '0' and produce a reduced class schema.\n\n")
+    message("\n\nIf n.employees is NULL, pragmatically assign '0' and produce a reduced class schema.\n\n")
     n.employees <- rep(0, length(isco))
   }
 
@@ -92,9 +93,9 @@ oesch <- function(isco, isco08=TRUE, self.employed=NULL, n.employees=NULL, n.cla
 
   if (any(isco[(!is.na(isco)) & isco != 10] %>% nchar == 4)) {
 
-    #################################################
-    # Create Oesch class schema for respondents ISCO 4-digit
-    #################################################
+
+# Create Oesch class schema for respondents ISCO88 4-digit ------
+
 
     d$class16 <- -9
 
@@ -224,9 +225,9 @@ oesch <- function(isco, isco08=TRUE, self.employed=NULL, n.employees=NULL, n.cla
       isco = isco %>% stringr::str_replace(string=., pattern=".$", replacement="")
     }
 
-    #################################################
-    # Create Oesch class schema for respondents ISCO 2-digit
-    #################################################
+
+# Create Oesch class schema for respondents ISCO88 2-digit --------
+
 
     d$class16_r<- -9
 
@@ -365,9 +366,9 @@ oesch <- function(isco, isco08=TRUE, self.employed=NULL, n.employees=NULL, n.cla
 
     if (any(isco[(!is.na(isco)) & isco != 10] %>% nchar == 4)) {
 
-      #################################################
-      # Create Oesch class schema for respondents
-      #################################################
+
+# Create Oesch class schema for respondents ISCO 08 ----
+
 
       d$class16_r <- -9
 
