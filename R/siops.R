@@ -1,3 +1,19 @@
+#' Function to convert ISCO08 to SIOPS scores
+#'
+#' @description Function to code SIOPS (Treiman prestige scale) from ISCO-08 codes.
+#' @param isco08 ISCO-08 code, given as string with four digits. Numeric values are passed to is.character().
+#' @param print.na Logical. Defaults to TRUE
+#'
+#' @return Returns a numeric vector of SIOPS scores.
+#' @export
+#'
+#'@references
+#'Adopted with changes from Nicole Schwitter's ISCO08ConveRsions
+#'
+#'Ganzeboom, Harry B.G.; Treiman, Donald J., "International Stratification and Mobility File: Conversion Tools." Amsterdam: Department of Social Research Methodology, <http://www.harryganzeboom.nl/ismf/index.htm>.
+#'
+#' @examples
+#' df[, siops:= siops(isco08, print.na=T)]
 siops <- function(isco08, print.na=T){
   if(!is.character(isco08)) {
     isco08 <- as.character(isco08)
