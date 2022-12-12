@@ -1,4 +1,3 @@
-
 siops <- function(isco08, print.na=T){
   if(!is.character(isco08)) {
     isco08 <- as.character(isco08)

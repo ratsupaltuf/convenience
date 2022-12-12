@@ -4,15 +4,17 @@
 \alias{alabs}
 \title{Show values and labels of a labelled vector in table format}
 \usage{
-alabs(x, kable = TRUE)
+alabs(x, kable = TRUE, extended = T)
 }
 \arguments{
 \item{x}{A labelled vector}
 
-\item{kable}{Optional=should the output be processed by knitr::kable?}
+\item{kable}{Should the output be processed by knitr::kable? Default is TRUE}
+
+\item{extended}{Should extended information be displayed? Default is TRUE.}
 }
 \value{
-Value and labels of \code{x}
+Value and labels of \code{x}. If extended==T, return Label, class and unique values.
 }
 \description{
 This is a helper function for the times you want to see values and labels of a labelled vector.
