@@ -5,6 +5,7 @@
 #' @return Returns the intraclass correlation coefficient at each level
 #' @importFrom lme4 VarCorr
 #' @importFrom dplyr tibble
+#' @importFrom MuMIn r.squaredGLMM
 #' @export
 #'
 #' @note
