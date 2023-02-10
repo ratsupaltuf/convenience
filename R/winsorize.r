@@ -27,7 +27,7 @@ winsorize <- function(x,
   } else if (fixed.val=="iqr") {
     maxval<- quantile(x, prob=.75,na.rm=T) + 1.5*IQR(x, na.rm = T)
   }
-  if(show==T) {cat(sum(x>maxval, na.rm=T), "cases winsorized at value", maxval)}
+  if(show==T) {cat(sum(x>maxval, na.rm=T), "cases winsorized at value", maxval, "\n")}
   x <- ifelse(x > maxval, maxval, x)
   return(x)
 }
