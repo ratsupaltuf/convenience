@@ -13,13 +13,13 @@ inc_quintiles(x, lower = 0, upper = T, prob = 0.2, show = T)
 
 \item{upper}{Logical. If TRUE (default), the vector contains unclassified NA values at the upper tail that are to be recoded}
 
-\item{prob}{Argument passed to `quantile()`. Default is .2 and the argument is currently not used, as only quintiles (prob=.2) are possible}
+\item{prob}{Argument passed to `quantile()` and the result to `cut()`. Default is .2}
 
 \item{show}{Logical. If TRUE (default), show the last five values and corresponding values and which whether they were coded as NA}
 }
 \value{
-A numerical vector of length 5, given quintiles of the original
-  vector. If show==T, prints info on which of the labels and values at the
+A numerical vector with values recoded their quantile of the original distribution, specified by prob.
+  If show==T, prints info on which of the labels and values at the
   tail were NA coded to the console.
 }
 \description{

@@ -4,11 +4,11 @@
 #' @param x Numeric (labelled) Vector
 #' @param lower Numeric. All values below "lower" are coded as NA. Defaults to 0.
 #' @param upper Logical. If TRUE (default), the vector contains unclassified NA values at the upper tail that are to be recoded
-#' @param prob Argument passed to `quantile()`. Default is .2 and the argument is currently not used, as only quintiles (prob=.2) are possible
+#' @param prob Argument passed to `quantile()` and the result to `cut()`. Default is .2
 #' @param show Logical. If TRUE (default), show the last five values and corresponding values and which whether they were coded as NA
 #'
-#' @return A numerical vector of length 5, given quintiles of the original
-#'   vector. If show==T, prints info on which of the labels and values at the
+#' @return A numerical vector with values recoded their quantile of the original distribution, specified by prob.
+#'   If show==T, prints info on which of the labels and values at the
 #'   tail were NA coded to the console.
 #'
 #' @description The function codes NA values for the (labelled) numeric vector
@@ -52,13 +52,7 @@ inc_quintiles<- function(x, lower=0, upper=T, prob=.2, show=T) {
     x<-ifelse(x>=0 & x<upper, x, NA)}
 
   pq<- quantile(x, probs=seq(0,1,prob), na.rm=T)
-  x
-  x<- case_when(x<pq[2] ~ 1,
-                x<pq[3] ~ 2,
-                x<pq[4] ~ 3,
-                x<pq[5] ~ 4,
-                x<pq[6] ~ 5
-  )
+  x<- cut(x, breaks=pq, labels=F, include.lowest=T, right=T)
   if(show==T) {
     # Additional check: print the last five labels indicate which were NA coded
     t.show$Code <- ifelse(t.show$values>=upper, "NA", "-")
