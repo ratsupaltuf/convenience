@@ -4,7 +4,7 @@
 \alias{inc_quintiles}
 \title{Code income quintiles}
 \usage{
-inc_quintiles(x, lower = 0, upper = T, prob = 0.2, show = T)
+inc_quintiles(x, lower = 0, upper = T, eqv = NULL, prob = 0.2, show = T)
 }
 \arguments{
 \item{x}{Numeric (labelled) Vector}
@@ -12,6 +12,9 @@ inc_quintiles(x, lower = 0, upper = T, prob = 0.2, show = T)
 \item{lower}{Numeric. All values below "lower" are coded as NA. Defaults to 0.}
 
 \item{upper}{Logical. If TRUE (default), the vector contains unclassified NA values at the upper tail that are to be recoded}
+
+\item{eqv}{Numerical vector of length equal to x with the number of people in household.
+Used for LIS equivalized (square root) income if not NULL (the default).}
 
 \item{prob}{Argument passed to `quantile()` and the result to `cut()`. Default is .2}
 

@@ -4,6 +4,8 @@
 #' @param x Numeric (labelled) Vector
 #' @param lower Numeric. All values below "lower" are coded as NA. Defaults to 0.
 #' @param upper Logical. If TRUE (default), the vector contains unclassified NA values at the upper tail that are to be recoded
+#' @param eqv Numerical vector of length equal to x with the number of people in household.
+#' Used for LIS equivalized (square root) income if not NULL (the default).
 #' @param prob Argument passed to `quantile()` and the result to `cut()`. Default is .2
 #' @param show Logical. If TRUE (default), show the last five values and corresponding values and which whether they were coded as NA
 #'
@@ -33,7 +35,7 @@
 #' df10[, hhinc:=do.call(pmin, c(.SD, na.rm=TRUE)), .SDcols=quintcols]
 #' df10[, c(quintcols):=NULL]
 
-inc_quintiles<- function(x, lower=0, upper=T, prob=.2, show=T) {
+inc_quintiles<- function(x, lower=0, upper=T, eqv=NULL, prob=.2, show=T) {
   if(show==T) {
     # if you want to print the labels of the last five values
     t.show<-tail(tibble(labels = names(attributes(x)$labels), values = attributes(x)$labels))
@@ -49,7 +51,16 @@ inc_quintiles<- function(x, lower=0, upper=T, prob=.2, show=T) {
     # Then get its name (i.e. the numerical value) and save
     t<- prop.table(table(x))*100
     upper <-as.numeric(names(tail(t)[tail(t)>0.3]))[1]
-    x<-ifelse(x>=0 & x<upper, x, NA)}
+    x<-ifelse(x>=0 & x<upper, x, NA)
+    }
+
+
+    if( !is.null(eqv) ) {
+      if(!is.numeric(eqv)) stop("equivalization vector must be numeric")
+      if(length(eqv)!=length(x)) stop("equivalization vector must have the same length as income vector")
+
+    x<- x/sqrt(eqv)
+  }
 
   pq<- quantile(x, probs=seq(0,1,prob), na.rm=T)
   x<- cut(x, breaks=pq, labels=F, include.lowest=T, right=T)
