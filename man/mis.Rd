@@ -2,21 +2,21 @@
 % Please edit documentation in R/mis.r
 \name{mis}
 \alias{mis}
-\title{Calculate the percentage of missing values in a vector}
+\title{Calculate the percentage of missing values in a vector or a list of vectors}
 \usage{
 mis(x)
 }
 \arguments{
-\item{x}{A vector of numeric or character values}
+\item{x}{A vector or a list of vectors}
 }
 \value{
-A numeric value representing the percentage of missing values in the input vector
+A numeric value or a vector of numeric values representing the percentage of missing values
 }
 \description{
-This function takes a vector as input and calculates the percentage of missing values in it.
+This function calculates the percentage of missing values in a vector or a list of vectors.
 }
 \examples{
-mis(c(1, NA, 3, NA, 5))
-mis(c("a", "b", "", NA, "d"))
+mis(c(1,2,NA,4,NA)) # returns 40
+mis(list(c(1,2,NA), c(NA,3,4), c(NA,NA,NA))) # returns c(33.33, 66.67, 100)
 
 }
