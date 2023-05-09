@@ -1,6 +1,6 @@
 #' Calculate the percentage of missing values in a vector or a list of vectors
 #'
-#' This function calculates the percentage of missing values in a vector or a list of vectors.
+#'@description This function calculates the percentage of missing values in a vector or a list of vectors.
 #'
 #' @usage mis(x)
 #'
@@ -13,6 +13,7 @@
 #' mis(list(c(1,2,NA), c(NA,3,4), c(NA,NA,NA))) # returns c(33.33, 66.67, 100)
 #'
 #' @export
+
 mis <- function(x) {
   if(is.list(x)) {
     lapply(x, function(y) {
