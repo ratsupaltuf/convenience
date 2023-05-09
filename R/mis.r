@@ -2,6 +2,8 @@
 #'
 #' This function calculates the percentage of missing values in a vector or a list of vectors.
 #'
+#' @usage mis(x)
+#'
 #' @param x A vector or a list of vectors
 #'
 #' @return A numeric value or a vector of numeric values representing the percentage of missing values
