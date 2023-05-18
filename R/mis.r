@@ -1,6 +1,6 @@
 #' Calculate the percentage of missing values in a vector or a list of vectors
 #'
-#'@description This function calculates the percentage of missing values in a vector or a list of vectors.
+#' @description This function calculates the percentage of missing values in a vector or a list of vectors.
 #'
 #' @usage mis(x)
 #'

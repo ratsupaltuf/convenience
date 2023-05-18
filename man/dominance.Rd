@@ -4,7 +4,7 @@
 \alias{dominance}
 \title{Compute social class based on dominance principle}
 \usage{
-dominance(resp, partner)
+dominance(resp, partner, higher = F)
 }
 \arguments{
 \item{resp}{A vector containing data for the respondent.}
@@ -15,8 +15,8 @@ dominance(resp, partner)
 A vector containing the social class variable.
 }
 \description{
-This function assigns social class based on the dominance principle, which assumes that lower values
-indicate higher class. The function takes two input variables, \code{resp} and \code{partner},
+This function assigns social class based on the dominance principle.
+The default assumes that lower values indicate higher class. The function takes two input variables, \code{resp} and \code{partner},
 which represent the respondent and partner, respectively. If the respondent's class is missing, it takes the partner's class.
 If either \code{resp} or \code{partner} is a factor variable, it is converted to numeric before computation. The resulting variable is
 assigned labels based on the labels of the \code{resp} variable.
