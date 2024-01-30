@@ -5,7 +5,6 @@ export(alabs)
 export(decompose)
 export(dominance)
 export(freql)
-
 export(icc)
 export(inc_quintiles)
 export(interpolate)
