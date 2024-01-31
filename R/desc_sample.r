@@ -45,12 +45,13 @@ desc_sample<- function(data, country, year, replace.na=NULL, kable=T){
   t<- as.list(colSums(N1[,-1], na.rm = T))
   t<-append("Total (Subjects)", as.list(t))
 
-  names(t)<- c("Year", unique(data[[year]]), "Total")
-  names(N1) <- c("Year", unique(data[[year]]), "Total")
+  names(t)<- c("Year", sort(unique(data[[year]])), "Total")
+  names(N1) <- c("Year", sort(unique(data[[year]])), "Total")
   N1 <- rbind(N1,t)
   N1$Total <- as.numeric(as.character(N1$Total))
   #min and max countries
-  N2 <- data %>% mutate(year=as.numeric(year)) %>% group_by(year) %>% summarise(N= length(unique(country)))
+  N2 <- data %>% arrange(country, year) %>%
+    mutate(year=as.numeric(year)) %>% group_by(year) %>% summarise(N= length(unique(country)))
   N2 <- N2 %>% spread(year, N)
   Total <- length(unique(data[[country]]))
   b <- c("Total (Countries)")
@@ -70,3 +71,4 @@ desc_sample<- function(data, country, year, replace.na=NULL, kable=T){
   }
   return(N1)
 }
+
