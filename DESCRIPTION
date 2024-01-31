@@ -1,12 +1,13 @@
 Package: convenience
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Functions frequently used for data management
 Version: 0.1.0
 Author: Simon Bienstman
 Maintainer: <bienstman@soz.uni-frankfurt.de>
-Description: The package contains functions I regularly use for recoding.
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Description: The package contains functions I regularly use for recoding. In particular, 
+ it contains functions required for the income harmonization in the POLAR ISSP cumulation
+ 
+License: 
 Encoding: UTF-8
 LazyData: true
 Imports: sjlabelled, knitr, summarytools, dplyr, zoo, MuMIn
