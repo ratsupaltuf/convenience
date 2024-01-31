@@ -55,7 +55,7 @@ desc_sample<- function(data, country, year, replace.na=NULL, kable=T){
   Total <- length(unique(data[[country]]))
   b <- c("Total (Countries)")
   N2 <- cbind(b, N2,Total)
-  names(N2) <- c("Year", unique(data[[year]]), "Total")
+  names(N2) <- c("Year", sort(unique(data[[year]])), "Total")
 
   N1 <- bind_rows(N1, N2)
 

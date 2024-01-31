@@ -6,7 +6,6 @@ Author: Simon Bienstman
 Maintainer: <bienstman@soz.uni-frankfurt.de>
 Description: The package contains functions I regularly use for recoding. In particular, 
  it contains functions required for the income harmonization in the POLAR ISSP cumulation
- 
 License: 
 Encoding: UTF-8
 LazyData: true
