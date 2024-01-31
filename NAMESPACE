@@ -3,6 +3,7 @@
 S3method(na.omit,info)
 export(alabs)
 export(decompose)
+export(desc_sample)
 export(dominance)
 export(freql)
 export(icc)

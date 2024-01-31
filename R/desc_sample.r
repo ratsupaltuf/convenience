@@ -29,10 +29,44 @@
 #'
 #' @note Make sure to have the necessary packages (\code{dplyr} and \code{knitr}) installed and loaded in your R environment before using this function.
 #'
-#' @export
 #'
 #' @seealso
 #' \code{\link[dplyr]{group_by}}, \code{\link[dplyr]{summarise}}, \code{\link[knitr]{kable}}
 #'
 #'
 #' @author Simon Bienstman
+#'
+#' @export
+desc_sample<- function(data, country, year, replace.na=NULL, kable=T){
+  #Table showing sample size per year and country,
+  N1 <- data %>% group_by(country, year) %>% summarise("N"=n())
+  N1 <- N1 %>% spread(year, N)
+  N1$'Total' <- c(rowSums(N1[,-1], na.rm = T))
+  t<- as.list(colSums(N1[,-1], na.rm = T))
+  t<-append("Total (Subjects)", as.list(t))
+
+  names(t)<- c("Year", unique(data[[year]]), "Total")
+  names(N1) <- c("Year", unique(data[[year]]), "Total")
+  N1 <- rbind(N1,t)
+  N1$Total <- as.numeric(as.character(N1$Total))
+  #min and max countries
+  N2 <- data %>% mutate(year=as.numeric(year)) %>% group_by(year) %>% summarise(N= length(unique(country)))
+  N2 <- N2 %>% spread(year, N)
+  Total <- length(unique(data[[country]]))
+  b <- c("Total (Countries)")
+  N2 <- cbind(b, N2,Total)
+  names(N2) <- c("Year", unique(data[[year]]), "Total")
+
+  N1 <- bind_rows(N1, N2)
+
+  if(!is.null(replace.na)) {
+    N1 <- apply(N1,2, as.character)
+    N1[is.na(N1)] <- replace.na
+  }
+
+  if(kable==T) {
+
+    N1 <-  N1 %>% knitr::kable()
+  }
+  return(N1)
+}
