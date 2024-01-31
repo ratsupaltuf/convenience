@@ -3,5 +3,5 @@
 # and then run roxygenize
 
 library(roxygen2)
-roxygenise()
+roxygenise(clean=T)
 
