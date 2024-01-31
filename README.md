@@ -4,4 +4,5 @@ In particular, it contains functions required for the income harmonization in th
 
 
 It is not on Cran, so to install and update the package, run 
-`devtools::install_github("ratsupaltuf/convenience", force=T)`
+
+> `devtools::install_github("ratsupaltuf/convenience", force=T)`
