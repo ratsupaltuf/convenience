@@ -61,5 +61,5 @@ decompose <- # function name
 
     df_selected <-
       df_selected[, .SD, .SDcols = selection]
-    merge(data, df_selected, all.x=T)
+    merge(data, df_selected,by=c(idcol, yearcol), all.x=T)
   }

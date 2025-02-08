@@ -10,4 +10,4 @@ License:
 Encoding: UTF-8
 LazyData: true
 Imports: sjlabelled, knitr, summarytools, dplyr, zoo, MuMIn
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
